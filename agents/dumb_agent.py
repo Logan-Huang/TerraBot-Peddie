@@ -156,24 +156,24 @@ while not rospy.core.is_shutdown():
     	clock()
     
     #Stuff that happens during the night 
-    if (((sensorsG.time - day_clock < 14400) or (sensorsG.time - day_clock > 72000))):
+    if (((sensorsG.time - day_clock < 32400) or (sensorsG.time - day_clock > 72000))):
        if(lights_on == True):
            print("turned lights lower at %1.f " % (sensorsG.time - day_clock))
-           led_pub.publish(225)
+           led_pub.publish(245)
            lights_on = False
     #Stuff that happens during the day 
-    elif ((sensorsG.time - day_clock > 14400) and (sensorsG.time - day_clock < 72000)):
+    elif ((sensorsG.time - day_clock > 32400) and (sensorsG.time - day_clock < 72000)):
        if(lights_on == False):
            print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
-           led_pub.publish(225)
+           led_pub.publish(223)
            lights_on = True
     #Stuff that happens every hour
-    if (((sensorsG.time - day_clock) % 3600) > 0 and ((sensorsG.time - day_clock) % 3600) < 300):
+    if (((sensorsG.time - day_clock) % 900) > 0 and ((sensorsG.time - day_clock) % 900) < 380):
        if(fans_on == False):
            print("fan turned on at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(True)
            fans_on = True
-    elif(((sensorsG.time - day_clock) % 3600) > 300):
+    elif(((sensorsG.time - day_clock) % 900) > 380):
        if(fans_on == True):
            print("fan turned off at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(False)
@@ -228,7 +228,8 @@ while not rospy.core.is_shutdown():
                 elif input[0] == 's':
                     speedup_pub.publish(int(input[1:]))
                 elif input[0] == 't':
-                    print("Current Time %s" % (sensorsG.time - day_clock))
+                    print("Current Time %s" % sensorsG.time)
+                    print("Current Day Time %s" % (sensorsG.time - day_clock))
                     print("Current Day %s" % days_passed)
                 elif input[0] == 'v':
                     print("Sensor values at %s" % clock_time(sensorsG.time))
