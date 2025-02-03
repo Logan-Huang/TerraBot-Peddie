@@ -179,12 +179,12 @@ while not rospy.core.is_shutdown():
            fan_pub.publish(False)
            fans_on = False
     #Stuff that happens every day
-    if (sensorsG.time - day_clock > 0 and sensorsG.time - day_clock < 25):
+    if (sensorsG.time - day_clock > 0 and sensorsG.time - day_clock < 258):
        if(pump_on == False and days_passed > 3):
            print("pump turned on at %.1f" % (sensorsG.time - day_clock))
            wpump_pub.publish(True)
            pump_on = True
-    elif (sensorsG.time - day_clock > 25):
+    elif (sensorsG.time - day_clock > 8):
        if(pump_on == True and days_passed > 3):
            print("pump turned off at %.1f" % (sensorsG.time - day_clock))
            wpump_pub.publish(False)
