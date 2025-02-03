@@ -156,16 +156,16 @@ while not rospy.core.is_shutdown():
     	clock()
     
     #Stuff that happens during the night 
-    if (((sensorsG.time - day_clock < 32400) or (sensorsG.time - day_clock > 72000))):
+    if (((sensorsG.time - day_clock < 30600) or (sensorsG.time - day_clock > 61200))):
        if(lights_on == True):
            print("turned lights lower at %1.f " % (sensorsG.time - day_clock))
            led_pub.publish(245)
            lights_on = False
     #Stuff that happens during the day 
-    elif ((sensorsG.time - day_clock > 32400) and (sensorsG.time - day_clock < 72000)):
+    elif ((sensorsG.time - day_clock > 30600) and (sensorsG.time - day_clock < 61200)):
        if(lights_on == False):
            print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
-           led_pub.publish(223)
+           led_pub.publish(210)
            lights_on = True
     #Stuff that happens every hour
     if (((sensorsG.time - day_clock) % 900) > 0 and ((sensorsG.time - day_clock) % 900) < 380):
