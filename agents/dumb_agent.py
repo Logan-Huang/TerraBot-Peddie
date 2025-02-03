@@ -167,13 +167,13 @@ while not rospy.core.is_shutdown():
            print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
            led_pub.publish(210)
            lights_on = True
-    #Stuff that happens every hour
-    if (((sensorsG.time - day_clock) % 900) > 0 and ((sensorsG.time - day_clock) % 900) < 380):
+    #Stuff that happens every 15 mins
+    if (((sensorsG.time - day_clock) % 900) > 0 and ((sensorsG.time - day_clock) % 900) < 300):
        if(fans_on == False):
            print("fan turned on at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(True)
            fans_on = True
-    elif(((sensorsG.time - day_clock) % 900) > 380):
+    elif(((sensorsG.time - day_clock) % 900) > 300):
        if(fans_on == True):
            print("fan turned off at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(False)
