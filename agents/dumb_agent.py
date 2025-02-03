@@ -137,6 +137,7 @@ print("Connected and ready for interaction")
 
 lights_on = True
 fans_on = False
+pump_on = False
 
 print("Booleans initialized")
 
@@ -152,22 +153,37 @@ while not rospy.core.is_shutdown():
     	clock()
     
     #Stuff that happens during the night 
-    if (((sensorsG.time - day_clock < 14400) or (sensorsG.time - day_clock > 72000)) and lights_on == True):
-       print("turned lights lower at %1.f " % (sensorsG.time - day_clock))
-       led_pub.publish(175)
-       lights_on = False
+    if (((sensorsG.time - day_clock < 14400) or (sensorsG.time - day_clock > 72000))):
+       if(lights_on == True):
+           print("turned lights lower at %1.f " % (sensorsG.time - day_clock))
+           led_pub.publish(200)
+           lights_on = False
     #Stuff that happens during the day 
-    elif ((sensorsG.time - day_clock > 14400) and (sensorsG.time - day_clock < 72000) and lights_on == False):
-       print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
-       led_pub.publish(210)
-       lights_on = True
+    elif ((sensorsG.time - day_clock > 14400) and (sensorsG.time - day_clock < 72000)):
+       if(lights_on == False):
+           print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
+           led_pub.publish(210)
+           lights_on = True
     #Stuff that happens every hour
-    if (((sensorsG.time - day_clock) % 3600) > 0 and ((sensorsG.time - day_clock) % 3600) < 300 and fans_on == False):
-       fan_pub.publish(True)
-       fans_on = True
-    elif(((sensorsG.time - day_clock) % 3600) > 300 and fans_on == True):
-       fan_pub.publish(False)
-       fans_on = False
+    if (((sensorsG.time - day_clock) % 3600) > 0 and ((sensorsG.time - day_clock) % 3600) < 300):
+       if(fans_on == False):
+           fan_pub.publish(True)
+           fans_on = True
+    elif(((sensorsG.time - day_clock) % 3600) > 300):
+       if(fans_on == True):
+           fan_pub.publish(False)
+           fans_on = False
+    #Stuff that happens every day
+    if (sensorsG.time - day_clock > 0 and sensorsG.time - day_clock < 10):
+       if(pump_on == False):
+           print("pump turned on at %.1f" % (sensorsG.time - day_clock))
+           wpump_pub.publish(True)
+           pump_on = True
+    elif (sensorsG.time - day_clock > 10):
+       if(pump_on == True):
+           print("pump turned off at %.1f" % (sensorsG.time - day_clock))
+           wpump_pub.publish(False)
+           pump_on = False
 
     ### Check for input
     if sys.stdin in select.select([sys.stdin],[],[],0)[0]:
