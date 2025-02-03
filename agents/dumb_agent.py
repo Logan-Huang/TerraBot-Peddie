@@ -123,11 +123,14 @@ def ping():
     #print("PING! %s" %clock_time(sensorsG.time))
     last_ping = sensorsG.time
     ping_pub.publish(True)
-    
+
+days_passed = 0
 day_clock = 0
 def clock():
     global day_clock
     day_clock = sensorsG.time
+    global days_passed
+    days_passed += 1
 
 init_ros()
 init_sensors()
@@ -156,26 +159,28 @@ while not rospy.core.is_shutdown():
     if (((sensorsG.time - day_clock < 14400) or (sensorsG.time - day_clock > 72000))):
        if(lights_on == True):
            print("turned lights lower at %1.f " % (sensorsG.time - day_clock))
-           led_pub.publish(200)
+           led_pub.publish(225)
            lights_on = False
     #Stuff that happens during the day 
     elif ((sensorsG.time - day_clock > 14400) and (sensorsG.time - day_clock < 72000)):
        if(lights_on == False):
            print("turned lights higher at %.1f" % (sensorsG.time - day_clock))
-           led_pub.publish(210)
+           led_pub.publish(225)
            lights_on = True
     #Stuff that happens every hour
     if (((sensorsG.time - day_clock) % 3600) > 0 and ((sensorsG.time - day_clock) % 3600) < 300):
        if(fans_on == False):
+           print("fan turned on at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(True)
            fans_on = True
     elif(((sensorsG.time - day_clock) % 3600) > 300):
        if(fans_on == True):
+           print("fan turned off at %.1f" % (sensorsG.time - day_clock))
            fan_pub.publish(False)
            fans_on = False
     #Stuff that happens every day
     if (sensorsG.time - day_clock > 0 and sensorsG.time - day_clock < 10):
-       if(pump_on == False):
+       if(pump_on == False and days_passed > 7):
            print("pump turned on at %.1f" % (sensorsG.time - day_clock))
            wpump_pub.publish(True)
            pump_on = True
@@ -224,6 +229,7 @@ while not rospy.core.is_shutdown():
                     speedup_pub.publish(int(input[1:]))
                 elif input[0] == 't':
                     print("Current Time %s" % (sensorsG.time - day_clock))
+                    print("Current Day %s" % days_passed)
                 elif input[0] == 'v':
                     print("Sensor values at %s" % clock_time(sensorsG.time))
                     print("  Light level: %.1f (%.1f, %.1f)"
